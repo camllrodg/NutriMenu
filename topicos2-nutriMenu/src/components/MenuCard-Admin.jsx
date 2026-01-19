@@ -1,12 +1,13 @@
 import React from 'react';
 
-function MenuCard(props){
-  const { dish, price, stock, restaurant, imageURL } = props;
+function MenuCardAdmin(props){
+  const { dish, price, stock, restaurant, imageURL, isPublished, updatePublicationStatus } = props;
 
   const img = imageURL || 'https://via.placeholder.com/600x400?text=Plato';
 
   const stockBadge = stock <= 3 ? '¡Últimos! ' + stock : `Quedan ${stock} raciones`;
   const stockColor = stock <= 3 ? 'bg-rose-100 text-rose-700' : 'bg-amber-100 text-amber-700';
+
 
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden w-80">
@@ -24,11 +25,14 @@ function MenuCard(props){
         </div>
 
         <p className="text-sm text-gray-500 font-semibold mt-2">Local: {restaurant}</p>
+        {isPublished ? <p className="text-sm text-green-500 font-semibold mt-2">Publicado</p> : <p className="text-sm text-red-500 font-semibold mt-2">No publicado</p>}
 
         <div className="mt-4">
-          <button className="w-full bg-amber-50 text-amber-900 border border-amber-100 rounded-md py-3 flex items-center justify-center gap-2">
-            <i className="bi bi-shop"></i>
-            Solicitar pedido
+          <button 
+            className={`w-full ${isPublished ? 'bg-red-500' : 'bg-green-500'} text-white border border-amber-100 rounded-md py-3 flex items-center justify-center gap-2`}
+            onClick={updatePublicationStatus}
+          >
+            {isPublished ? "Dejar de publicar" : "Publicar"}
           </button>
         </div>
       </div>
@@ -36,4 +40,4 @@ function MenuCard(props){
   );
 }
 
-export default MenuCard;
+export default MenuCardAdmin;

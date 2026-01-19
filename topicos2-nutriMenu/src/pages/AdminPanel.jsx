@@ -1,11 +1,12 @@
 import React from 'react';
 import Header from '../components/Header';
+import MenuSectionAdmin from '../components/MenuSection-Admin';
 
 function AdminPanel(){
     return(
         <>
             <Header />
-            <h1 className='text-6xl font-bold'>Panel de Administrador</h1>
+            <MenuSectionAdmin />
         </>
     )
 }

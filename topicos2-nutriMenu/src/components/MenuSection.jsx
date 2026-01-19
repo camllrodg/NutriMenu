@@ -12,14 +12,15 @@ function MenuSection(){
 
       <div className="flex flex-wrap gap-6">
         {simulatedMenuData.map(item => (
-          <MenuCard
-            key={item.id}
-            dish={item.dish}
-            price={item.price}
-            stock={item.stock}
-            restaurant={item.restaurant}
-            imageURL={item.imageURL}
-          />
+          item.isPublished && (
+            <MenuCard
+              dish={item.dish}
+              price={item.price}
+              stock={item.stock}
+              restaurant={item.restaurant}
+              imageURL={item.imageURL}
+            />
+          )
         ))}
       </div>
     </section>
