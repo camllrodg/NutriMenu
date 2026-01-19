@@ -3,6 +3,7 @@ import {useNavigate} from 'react-router-dom';
 import Header from '../components/Header';
 import CardHome from '../components/Card-Home';
 import MenuSection from '../components/MenuSection';
+import AvailabilitySection from '../components/AvailabilitySection';
 
 function Home(){
 
@@ -33,6 +34,7 @@ function Home(){
                         />
                     </div>
                 </div>
+                {/* <AvailabilitySection /> */}
             </div>
         </>
     )

@@ -2,7 +2,9 @@ import React from 'react';
 import MenuCard from './MenuCard';
 import { simulatedMenuData } from '../data/menuData';
 
-function MenuSection(){
+function MenuSection(props){
+  const { onRequestAvailability, loadingId } = props || {};
+
   return (
     <section className="w-full px-12 py-8">
       <div className="flex items-center justify-between mb-6">
@@ -14,11 +16,15 @@ function MenuSection(){
         {simulatedMenuData.map(item => (
           item.isPublished && (
             <MenuCard
+              key={item.id}
+              id={item.id}
               dish={item.dish}
               price={item.price}
               stock={item.stock}
               restaurant={item.restaurant}
               imageURL={item.imageURL}
+              onRequestAvailability={onRequestAvailability}
+              isLoading={loadingId === item.id}
             />
           )
         ))}

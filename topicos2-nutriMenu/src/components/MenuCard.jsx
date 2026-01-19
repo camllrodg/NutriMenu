@@ -1,7 +1,7 @@
 import React from 'react';
 
 function MenuCard(props){
-  const { dish, price, stock, restaurant, imageURL } = props;
+  const { id, dish, price, stock, restaurant, imageURL, onRequestAvailability, isLoading } = props;
 
   const img = imageURL || 'https://via.placeholder.com/600x400?text=Plato';
 
@@ -26,9 +26,22 @@ function MenuCard(props){
         <p className="text-sm text-gray-500 font-semibold mt-2">Local: {restaurant}</p>
 
         <div className="mt-4">
-          <button className="w-full bg-amber-50 text-amber-900 border border-amber-100 rounded-md py-3 flex items-center justify-center gap-2">
-            <i className="bi bi-shop"></i>
-            Solicitar pedido
+          <button
+            onClick={() => !isLoading && onRequestAvailability && onRequestAvailability({ id, restaurant, dish })}
+            className="w-full bg-amber-50 text-amber-900 border border-amber-100 rounded-md py-3 flex items-center justify-center gap-2"
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <>
+                <div className="w-5 h-5 border-4 border-t-transparent border-amber-900 rounded-full animate-spin" />
+                <span>Cargando...</span>
+              </>
+            ) : (
+              <>
+                <i className="bi bi-shop"></i>
+                Solicitar pedido
+              </>
+            )}
           </button>
         </div>
       </div>
