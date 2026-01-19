@@ -39,7 +39,7 @@ function ClientPanel() {
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
                     <div className="bg-white rounded-lg p-8 flex flex-col items-center gap-4">
                         <div className="w-20 h-20 border-8 border-emerald-600 border-t-transparent rounded-full animate-spin" />
-                        <div className="text-lg font-semibold">Comprobando disponibilidad...</div>
+                        <div className="text-lg font-semibold">Verificando disponibilidad...</div>
                     </div>
                 </div>
             )}
