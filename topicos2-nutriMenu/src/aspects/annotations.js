@@ -9,3 +9,4 @@ export const Wove = annotationFactory.create(AnnotationKind.CLASS, "Wove");
 export const saludo = annotationFactory.create(AnnotationKind.METHOD, "saludo");
 
 // aqui creamos las notaciones necesarias para el proyecto
+export const log = annotationFactory.create(AnnotationKind.METHOD, "log");
