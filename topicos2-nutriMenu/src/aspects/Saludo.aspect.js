@@ -10,7 +10,7 @@ class SaludoAspect {
     }
 
     @After(on.methods.withAnnotations(saludo))
-    afterSaludo(meta){
+    afterSaludo(meta){+
         console.log("Aspecto después de saludo");
     }
 }
