@@ -4,7 +4,7 @@ function CardHome(props)
 {
     const navigate = useNavigate();
     
-    const {title, titleBtn, imageUrl} = props;
+    const {title, titleBtn, imageUrl, path} = props;
 
     return(
         <div className="rounded-xl shadow-md h-80 w-100 overflow-hidden bg-white group">
@@ -15,7 +15,7 @@ function CardHome(props)
                 <h2 className="font-bold text-2xl">{title}</h2>
                 
                  <button 
-                    onClick={() => navigate('/client-panel')}
+                    onClick={() => navigate(path)}
                     className='bg-transparent rounded-3xl w-fit p-3 flex gap-2 font-semibold text-gray-500 group-hover:bg-gray-200 transition-all duration-500'
                 >
                     {titleBtn}

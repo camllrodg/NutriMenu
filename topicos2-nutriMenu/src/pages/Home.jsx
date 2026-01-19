@@ -5,8 +5,6 @@ import CardHome from '../components/Card-Home';
 
 function Home(){
 
-    const navigate = useNavigate();
-
     return(
         <>
             <div>
@@ -21,14 +19,16 @@ function Home(){
                     {/* Cards Section */}
                     <div className='flex gap-3'>
                         <CardHome 
-                        title="Acceso Estudiante"
-                        titleBtn="Ingresar al portal"
-                        imageUrl="https://cdn7.kiwilimon.com/articuloimagen/32308/450x450/32455.jpg.webp"
+                            title="Acceso Estudiante"
+                            titleBtn="Ingresar al portal"
+                            imageUrl="https://cdn7.kiwilimon.com/articuloimagen/32308/450x450/32455.jpg.webp"
+                            path="/client-panel"
                         />
                         <CardHome 
                             title="Acceso Administrador"
                             titleBtn="Panel de control"
                             imageUrl="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/18/9b/05/c5/restaurante-rick-s.jpg?w=900&h=500&s=1"
+                            path="/admin-panel"
                         />
                     </div>
                 </div>

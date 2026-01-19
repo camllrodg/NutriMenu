@@ -5,6 +5,7 @@ import { saludoService } from './services/saludoService'
 import {Routes, Route, Link} from 'react-router-dom'
 import  Home  from './pages/Home'
 import ClientPanel from './pages/ClientPanel'
+import AdminPanel from './pages/AdminPanel'
 
 function App() {
   saludoService.saludo();
@@ -14,6 +15,7 @@ function App() {
         <Routes>
           <Route path='/' element={<Home />}></Route>
           <Route path='/client-panel' element={<ClientPanel />}></Route>
+          <Route path='/admin-panel' element={<AdminPanel />}></Route>
         </Routes>
       </div>
     </>
