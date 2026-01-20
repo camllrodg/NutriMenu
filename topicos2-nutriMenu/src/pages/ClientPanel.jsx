@@ -4,6 +4,7 @@ import Header from '../components/Header';
 import MenuSection from '../components/MenuSection';
 import AvailabilitySection from '../components/AvailabilitySection';
 import ControlesAlertas from '../components/ControlesAlertas';
+import ListenerAlertas from '../components/ListenerAlertas';
 import { verificarDisponibilidad } from '../services/capacidadService';
 
 function ClientPanel() {
@@ -32,8 +33,9 @@ function ClientPanel() {
         <>
             <Header />
             <div className="min-h-screen bg-gray-100 px-12 py-8 flex flex-col gap-8 items-center">
-                <ControlesAlertas />
+                <ListenerAlertas />
                 <MenuSection onRequestAvailability={handleRequestAvailability} loadingId={loadingId} />
+                <ControlesAlertas />
                 {/* AvailabilitySection is now a separate page; keep it out from here */}
             </div>
 
