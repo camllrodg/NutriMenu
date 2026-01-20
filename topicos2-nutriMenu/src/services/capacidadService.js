@@ -24,7 +24,8 @@ export async function verificarDisponibilidad(plato) {
     });
 }
 
-export async function realizarPedido(platoOrId) {
+export async function realizarPedido(platoOrId, options = { takeaway: false }) {
+    const takeaway = options.takeaway === true;
     const id = typeof platoOrId === 'string' && platoOrId.startsWith('m') ? platoOrId : null;
     const dishName = typeof platoOrId === 'string' && !id ? platoOrId : (platoOrId && platoOrId.dish ? platoOrId.dish : null);
 
@@ -35,11 +36,18 @@ export async function realizarPedido(platoOrId) {
             if (!item) return reject(new Error('Plato no encontrado'));
 
             if (item.stock <= 0) return reject(new Error('No hay stock disponible del plato'));
-            if (item.currentAforo >= item.capacity) return reject(new Error('Local sin capacidad'));
 
-            // Decrement stock and occupy one more seat
+            if (!takeaway) {
+                if (item.currentAforo >= item.capacity) return reject(new Error('Local sin capacidad'));
+            }
+
+            // Decrement stock
             item.stock = Math.max(0, item.stock - 1);
-            item.currentAforo = Math.min(item.capacity, item.currentAforo + 1);
+
+            // If not takeaway, occupy one more seat
+            if (!takeaway) {
+                item.currentAforo = Math.min(item.capacity, item.currentAforo + 1);
+            }
 
             resolve(item);
         }, 500);

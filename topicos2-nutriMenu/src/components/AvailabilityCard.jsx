@@ -1,13 +1,15 @@
 import React from 'react';
 
-function AvailabilityCard({ id, restaurant, imageURL, capacity, currentAforo, onOrder, processing }){
+function AvailabilityCard({ id, restaurant, imageURL, capacity, currentAforo, stock, onOrder, processing, allowTakeaway }){
   const img = imageURL || 'https://via.placeholder.com/600x400?text=Local';
 
   const ratio = capacity > 0 ? currentAforo / capacity : 0;
   const percent = Math.min(100, Math.round(ratio * 100));
 
   let status = { badge: 'Disponible', color: 'bg-emerald-50 text-emerald-700', box: 'bg-emerald-50' };
-  if (currentAforo >= capacity) {
+  if (stock <= 0) {
+    status = { badge: 'No disponible', color: 'bg-rose-50 text-rose-700', box: 'bg-rose-50' };
+  } else if (currentAforo >= capacity) {
     status = { badge: 'Local lleno', color: 'bg-rose-50 text-rose-700', box: 'bg-rose-50' };
   } else if (ratio >= 0.8) {
     status = { badge: 'Poca disponibilidad', color: 'bg-amber-50 text-amber-700', box: 'bg-amber-50' };
@@ -34,23 +36,47 @@ function AvailabilityCard({ id, restaurant, imageURL, capacity, currentAforo, on
         </div>
 
         <div className="mt-4">
-          <button
-            onClick={() => onOrder && onOrder(id)}
-            className={`w-full ${processing ? 'bg-amber-300' : 'bg-emerald-800'} text-white rounded-md py-3 flex items-center justify-center gap-2`}
-            disabled={processing}
-          >
-            {processing ? (
-              <>
-                <div className="w-5 h-5 border-4 border-t-transparent border-white rounded-full animate-spin" />
-                <span>Procesando...</span>
-              </>
-            ) : (
-              <>
-                <i className="bi bi-bag"></i>
-                Realizar pedido
-              </>
-            )}
-          </button>
+          {stock <= 0 ? (
+            <button className="w-full bg-rose-400 text-white rounded-md py-3 flex items-center justify-center gap-2" disabled>
+              <span>No disponible</span>
+            </button>
+          ) : (currentAforo >= capacity || allowTakeaway) ? (
+            <button
+              onClick={() => onOrder && onOrder(id, { takeaway: true })}
+              className={`w-full ${processing ? 'bg-amber-300' : 'bg-emerald-800'} text-white rounded-md py-3 flex items-center justify-center gap-2`}
+              disabled={processing}
+            >
+              {processing ? (
+                <>
+                  <div className="w-5 h-5 border-4 border-t-transparent border-white rounded-full animate-spin" />
+                  <span>Procesando...</span>
+                </>
+              ) : (
+                <>
+                  <i className="bi bi-bag"></i>
+                  Pide para llevar
+                </>
+              )}
+            </button>
+          ) : (
+            <button
+              onClick={() => onOrder && onOrder(id, { takeaway: false })}
+              className={`w-full ${processing ? 'bg-amber-300' : 'bg-emerald-800'} text-white rounded-md py-3 flex items-center justify-center gap-2`}
+              disabled={processing}
+            >
+              {processing ? (
+                <>
+                  <div className="w-5 h-5 border-4 border-t-transparent border-white rounded-full animate-spin" />
+                  <span>Procesando...</span>
+                </>
+              ) : (
+                <>
+                  <i className="bi bi-bag"></i>
+                  Realizar pedido
+                </>
+              )}
+            </button>
+          )}
         </div>
       </div>
     </div>

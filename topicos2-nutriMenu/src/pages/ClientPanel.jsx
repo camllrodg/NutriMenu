@@ -20,9 +20,19 @@ function ClientPanel() {
             // call capacity service (simulated delay)
             await verificarDisponibilidad(dish);
             // navigate to availability page, pass restaurant in state
-            navigate('/availability', { state: { restaurant } });
+            navigate('/availability', { state: { restaurant, allowTakeaway: false } });
         } catch (err) {
-            alert(err.message || 'Error al verificar disponibilidad');
+            const msg = err?.message || '';
+            const low = msg.toLowerCase();
+            // If local is full, still navigate to availability page and allow takeaway
+            if (low.includes('local lleno') || low.includes('capacidad')) {
+                navigate('/availability', { state: { restaurant, allowTakeaway: true } });
+            // If plato sin disponibilidad (stock 0), still navigate to availability to show 'No disponible'
+            } else if (low.includes('sin disponibilidad') || low.includes('sin stock') || low.includes('plato seleccionado sin disponibilidad')) {
+                navigate('/availability', { state: { restaurant, allowTakeaway: false } });
+            } else {
+                alert(msg || 'Error al verificar disponibilidad');
+            }
         } finally {
             setLoadingId(null);
         }

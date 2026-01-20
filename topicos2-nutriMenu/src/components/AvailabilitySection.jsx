@@ -4,7 +4,7 @@ import { simulatedMenuData } from '../data/menuData';
 import { realizarPedido } from '../services/capacidadService';
 
 function AvailabilitySection(props){
-  const { restaurantFilter } = props || {};
+  const { restaurantFilter, allowTakeaway = false } = props || {};
 
   // Only show the section when a restaurant has been selected via the "Solicitar pedido" button
   if (!restaurantFilter) return null;
@@ -13,11 +13,22 @@ function AvailabilitySection(props){
   const [processingId, setProcessingId] = useState(null);
 
   useEffect(() => {
-    const v = simulatedMenuData.filter(item => item.isPublished && item.restaurant === restaurantFilter);
-    setVisibleItems(v);
+    if (!restaurantFilter) {
+      setVisibleItems([]);
+      return;
+    }
+
+    // Find the restaurant item even if it's not published or has no availability
+    const item = simulatedMenuData.find(i => i.restaurant === restaurantFilter);
+    if (item) {
+      setVisibleItems([item]);
+    } else {
+      setVisibleItems([]);
+    }
   }, [restaurantFilter]);
 
-  if (!visibleItems || visibleItems.length === 0) return null;
+  // Always render the section when a restaurant has been selected (even if no availability)
+  if (!restaurantFilter) return null;
 
   return (
     <section className="w-full px-12 py-8">
@@ -33,14 +44,17 @@ function AvailabilitySection(props){
             imageURL={item.imageURL}
             capacity={item.capacity}
             currentAforo={item.currentAforo}
+            stock={item.stock}
+            allowTakeaway={allowTakeaway}
             processing={processingId === item.id}
-            onOrder={async (id) => {
+            onOrder={async (id, options = { takeaway: false }) => {
               try {
                 setProcessingId(id);
-                const updated = await realizarPedido(id);
+                const updated = await realizarPedido(id, options);
                 // refresh visible items from source data
-                const refreshed = simulatedMenuData.filter(i => i.isPublished && i.restaurant === restaurantFilter);
-                setVisibleItems(refreshed);
+                // Refresh the single item (may not be published)
+                const refreshedItem = simulatedMenuData.find(i => i.restaurant === restaurantFilter);
+                setVisibleItems(refreshedItem ? [refreshedItem] : []);
                 alert('Pedido realizado correctamente');
               } catch (err) {
                 alert(err.message || 'Error al realizar pedido');
