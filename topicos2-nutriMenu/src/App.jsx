@@ -9,7 +9,6 @@ import AdminPanel from './pages/AdminPanel'
 import AvailabilityPage from './pages/AvailabilityPage'
 
 function App() {
-  saludoService.saludo();
   return (
     <>
       <div className='pt-20'>
