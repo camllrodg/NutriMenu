@@ -1,27 +1,27 @@
 import { simulatedMenuData } from '../data/menuData'; //Importamos los datos de la app
 
 class AlertaService {
-    constructor() {
-        this.listeners = []; //Lista de invitados
-    }
+   constructor() {
+        this.callback = null; //Callback único para simplificar
+        this._intervalId = null; //ID del intervalo del scheduler
+   }
 
     forceTestAlert() {
         const mensajeSimulado = "¡Promo Flash! 50% de descuento en ensaladas en el cafetín";
         this.emitAlert(mensajeSimulado);
     }
-
+    
     subscribe(callback) {
-        this.listeners.push(callback);
+        this.callback = callback;
         return () => {
-            this.listeners = this.listeners.filter(cb => cb !== callback);
+            if (this.callback === callback) this.callback = null;
         };
     }
 
     //POE: Emisor de eventos 
     emitAlert(message) {
         const payload = { text: message, ts: new Date().toISOString() };
-        console.log("Evento disparado:", payload);
-        this.listeners.forEach(callback => callback(payload));
+        if (this.callback) this.callback(payload);
     }
 
     //El Scheduler: Revisa condiciones de tiempo y stock
@@ -42,35 +42,16 @@ class AlertaService {
         });
     }
 
-    //Permite simular que son ciertas horas clave (p.ej. "12:00" o "16:00")
-    simulateTime(timeString) {
-        if (timeString === "12:00") {
-            this.emitAlert("¡Ya puedes ver el menú de hoy en NutriMenu!");
-        }
-        else if (timeString === "16:00") {
-            this.emitAlert("¡Ofertas de cierre disponibles ahora en NutriMenu!");
-        }
-        else{
-            this.emitAlert(`Simulación de hora: ${timeString}`);
-        }
-    }
-
-    //Inicia el scheduler
-    startScheduler(intervalMs = 60000, immediate = false) {
-        //Limpiar intervalos anteriores para evitar múltiples timers.
-        if (this._intervalId) {
-            clearInterval(this._intervalId);
-            this._intervalId = null;
-        }
-        if (immediate) this.checkConditions();
+    startScheduler(ms = 5000) {
+        this.stopScheduler();
         this._intervalId = setInterval(() => {
             this.checkConditions();
+            // emitir un mensaje de control para forzar que la UI muestre cambios cada tick
             this.emitAlert(`Scheduler: actualización ${new Date().toLocaleTimeString()}`);
-        }, intervalMs);
-        console.log(`[AlertaService] scheduler started (interval ${intervalMs}ms)`);
+        }, ms);
+        console.log(`[AlertaService] scheduler started (interval ${ms}ms)`);
     }
 
-    //Detiene el scheduler (pruebas)
     stopScheduler() {
         if (this._intervalId) {
             clearInterval(this._intervalId);

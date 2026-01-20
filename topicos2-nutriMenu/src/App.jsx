@@ -24,34 +24,4 @@ function App() {
   )
 }
 
-/*
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import { saludoService } from './services/saludoService'
-import {Routes, Route, Link} from 'react-router-dom'
-import  Home  from './pages/Home'
-import ClientPanel from './pages/ClientPanel'
-import AdminPanel from './pages/AdminPanel'
-import AvailabilityPage from './pages/AvailabilityPage'
-
-function App() {
-  saludoService.saludo();
-  return (
-    <>
-      <div className='pt-20'>
-        <Routes>
-          <Route path='/' element={<Home />}></Route>
-          <Route path='/client-panel' element={<ClientPanel />}></Route>
-          <Route path='/admin-panel' element={<AdminPanel />}></Route>
-          <Route path='/availability' element={<AvailabilityPage />}></Route>
-        </Routes>
-      </div>
-    </>
-  )
-}
-
-export default App;
-*/
-
 export default App;

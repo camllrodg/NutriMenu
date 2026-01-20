@@ -1,4 +1,3 @@
-
 class UpdateDataService {
     async updateData(id, data, value) {
         for(let dataItem of data) {
