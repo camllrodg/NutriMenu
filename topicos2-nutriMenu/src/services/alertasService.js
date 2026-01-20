@@ -7,7 +7,7 @@ class AlertaService {
         this._lastHourEmitted = null;
         // Alarmas reales configurables: por defecto solo 12:00 y 16:00
         this.realAlarms = [
-            { hour: 5, message: '¡Ya puedes ver el menú de hoy en NutriMenu!' },
+            { hour: 12, message: '¡Ya puedes ver el menú de hoy en NutriMenu!' },
             { hour: 16, message: '¡Ofertas de cierre! Revisa los descuentos de última hora.' }
         ];
         this.currentAlert = null; //Alerta actual persistente
