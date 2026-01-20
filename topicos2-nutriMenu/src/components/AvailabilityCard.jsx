@@ -1,6 +1,6 @@
 import React from 'react';
 
-function AvailabilityCard({ restaurant, imageURL, capacity, currentAforo }){
+function AvailabilityCard({ id, restaurant, imageURL, capacity, currentAforo, onOrder, processing }){
   const img = imageURL || 'https://via.placeholder.com/600x400?text=Local';
 
   const ratio = capacity > 0 ? currentAforo / capacity : 0;
@@ -34,9 +34,22 @@ function AvailabilityCard({ restaurant, imageURL, capacity, currentAforo }){
         </div>
 
         <div className="mt-4">
-          <button className="w-full bg-emerald-800 text-white rounded-md py-3 flex items-center justify-center gap-2">
-            <i className="bi bi-bag"></i>
-            Realizar pedido
+          <button
+            onClick={() => onOrder && onOrder(id)}
+            className={`w-full ${processing ? 'bg-amber-300' : 'bg-emerald-800'} text-white rounded-md py-3 flex items-center justify-center gap-2`}
+            disabled={processing}
+          >
+            {processing ? (
+              <>
+                <div className="w-5 h-5 border-4 border-t-transparent border-white rounded-full animate-spin" />
+                <span>Procesando...</span>
+              </>
+            ) : (
+              <>
+                <i className="bi bi-bag"></i>
+                Realizar pedido
+              </>
+            )}
           </button>
         </div>
       </div>

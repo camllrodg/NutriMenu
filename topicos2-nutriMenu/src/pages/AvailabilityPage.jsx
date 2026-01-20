@@ -13,6 +13,9 @@ function AvailabilityPage(){
       <Header />
       <div className="min-h-screen bg-gray-100 px-12 py-8">
         <div className="max-w-5xl">
+          <div className="mb-6">
+            <button onClick={() => navigate('/client-panel')} className="mb-2 bg-emerald-700 text-white px-4 py-2 rounded">Volver al Menú</button>
+          </div>
           <div className="ml-0">
             <AvailabilitySection restaurantFilter={restaurant} />
           </div>
