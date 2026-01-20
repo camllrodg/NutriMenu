@@ -1,12 +1,13 @@
 import React from 'react';
 
 function MenuCardAdmin(props){
-  const { dish, price, stock, restaurant, imageURL, isPublished, updatePublicationStatus } = props;
+  const { dish, price, stock, restaurant, imageURL, isPublished, updatePublicationStatus, isUpdating } = props;
 
   const img = imageURL || 'https://via.placeholder.com/600x400?text=Plato';
 
   const stockBadge = stock <= 3 ? '¡Últimos! ' + stock : `Quedan ${stock} raciones`;
   const stockColor = stock <= 3 ? 'bg-rose-100 text-rose-700' : 'bg-amber-100 text-amber-700';
+  const loadingSpinner = (<i className="bi bi-arrow-clockwise animate-spin text-lg"></i>)
 
 
   return (
@@ -31,8 +32,13 @@ function MenuCardAdmin(props){
           <button 
             className={`w-full ${isPublished ? 'bg-red-500' : 'bg-green-500'} text-white border border-amber-100 rounded-md py-3 flex items-center justify-center gap-2`}
             onClick={updatePublicationStatus}
+            disabled={isUpdating}
           >
-            {isPublished ? "Dejar de publicar" : "Publicar"}
+            {isUpdating ? loadingSpinner 
+            : (
+              isPublished ? "Dejar de publicar" : "Publicar"
+            )}
+
           </button>
         </div>
       </div>
