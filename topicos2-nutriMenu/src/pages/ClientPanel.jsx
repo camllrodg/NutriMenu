@@ -19,9 +19,11 @@ function ClientPanel() {
         try {
             // call capacity service (simulated delay)
             await verificarDisponibilidad(dish);
+            console.log("Disponibilidad validada:", dish);
             // navigate to availability page, pass restaurant in state
             navigate('/availability', { state: { restaurant, allowTakeaway: false } });
         } catch (err) {
+            console.error("Error:", err.message);
             const msg = err?.message || '';
             const low = msg.toLowerCase();
             // If local is full, still navigate to availability page and allow takeaway

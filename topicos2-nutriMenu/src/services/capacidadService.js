@@ -1,9 +1,19 @@
 import { simulatedMenuData } from '../data/menuData.js';
 
 export async function verificarDisponibilidad(plato) {
-    // Accept either a string (dish name) or an object { dish }
-    const dishName = typeof plato === 'string' ? plato : (plato && plato.dish ? plato.dish : '');
-    const normalized = dishName ? dishName.toLowerCase() : '';
+    let dishName = '';
+    if (typeof plato === 'string') {
+        dishName = plato;
+    } else if (plato && plato.dish) {
+        dishName = plato.dish;
+    } else {
+        dishName = '';
+    }
+
+    let normalized = '';
+    if (dishName) {
+        normalized = dishName.toLowerCase();
+    }
 
     const dishObj = simulatedMenuData.find(item => item.dish.toLowerCase() === normalized);
 
@@ -26,27 +36,64 @@ export async function verificarDisponibilidad(plato) {
 
 export async function realizarPedido(platoOrId, options = { takeaway: false }) {
     const takeaway = options.takeaway === true;
-    const id = typeof platoOrId === 'string' && platoOrId.startsWith('m') ? platoOrId : null;
-    const dishName = typeof platoOrId === 'string' && !id ? platoOrId : (platoOrId && platoOrId.dish ? platoOrId.dish : null);
+    let id = null; 
 
-    const item = id ? simulatedMenuData.find(i => i.id === id) : simulatedMenuData.find(i => i.dish.toLowerCase() === (dishName || '').toLowerCase());
+    if (typeof platoOrId === 'string') {
+        id = platoOrId;
+    }
+    
+    let dishName = null; 
+
+    
+    if (typeof platoOrId === 'string' && !id) {
+        dishName = platoOrId; 
+    } 
+    
+    else if (platoOrId && platoOrId.dish) {
+        dishName = platoOrId.dish;
+    }
+
+
+    let item;
+
+    if (id) {
+        item = simulatedMenuData.find(i => i.id === id);
+    } else {
+        item = simulatedMenuData.find(i => {
+            const nombreEnLista = i.dish.toLowerCase();
+            const nombreBuscado = (dishName || '').toLowerCase();
+
+            return nombreEnLista === nombreBuscado;
+        });
+    }
 
     return new Promise((resolve, reject) => {
         setTimeout(() => {
-            if (!item) return reject(new Error('Plato no encontrado'));
-
-            if (item.stock <= 0) return reject(new Error('No hay stock disponible del plato'));
-
-            if (!takeaway) {
-                if (item.currentAforo >= item.capacity) return reject(new Error('Local sin capacidad'));
+            if (!item) {
+                return reject(new Error('Plato no encontrado'));
             }
 
-            // Decrement stock
-            item.stock = Math.max(0, item.stock - 1);
+            if (item.stock <= 0) {
+                return reject(new Error('No hay stock disponible del plato'));
 
-            // If not takeaway, occupy one more seat
+            } 
             if (!takeaway) {
-                item.currentAforo = Math.min(item.capacity, item.currentAforo + 1);
+                if (item.currentAforo >= item.capacity){
+                    return reject(new Error('Local sin capacidad'));
+                }
+            }
+
+            item.stock = item.stock - 1; 
+
+            if (item.stock < 0) {
+                item.stock = 0; 
+            }
+
+            if (!takeaway) {
+                item.currentAforo = item.currentAforo + 1;
+                if (item.currentAforo > item.capacity) {
+                    item.currentAforo = item.capacity; 
+                }
             }
 
             resolve(item);
