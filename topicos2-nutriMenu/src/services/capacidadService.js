@@ -1,4 +1,5 @@
 import { simulatedMenuData } from '../data/menuData.js';
+import { notificationService } from './alertasService';
 
 export async function verificarDisponibilidad(plato) {
     let dishName = '';
@@ -83,6 +84,7 @@ export async function realizarPedido(platoOrId, options = { takeaway: false }) {
                 }
             }
 
+            const prevStock = item.stock;
             item.stock = item.stock - 1; 
 
             if (item.stock < 0) {
@@ -95,6 +97,14 @@ export async function realizarPedido(platoOrId, options = { takeaway: false }) {
                     item.currentAforo = item.capacity; 
                 }
             }
+            
+            try {
+                const threshold = notificationService.stockThreshold || 5;
+                if (item.stock < threshold && item.stock < prevStock) {
+                    const msg = `Atención: stock bajo en: ${item.dish} (${item.stock}).`;
+                    notificationService.emitAlert(msg);
+                }
+            } catch (e) {}
 
             resolve(item);
         }, 500);

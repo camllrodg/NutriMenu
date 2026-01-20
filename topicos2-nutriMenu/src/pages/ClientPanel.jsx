@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import MenuSection from '../components/MenuSection';
 import AvailabilitySection from '../components/AvailabilitySection';
-import ControlesAlertas from '../components/ControlesAlertas';
 import ListenerAlertas from '../components/ListenerAlertas';
 import { verificarDisponibilidad } from '../services/capacidadService';
 
@@ -14,23 +13,18 @@ function ClientPanel() {
     const navigate = useNavigate();
 
     const handleRequestAvailability = async ({ id, restaurant, dish }) => {
-        // show spinner on the clicked card + full-screen overlay
         setLoadingId(id);
 
         try {
-            // call capacity service (simulated delay)
             await verificarDisponibilidad(dish);
             console.log("Disponibilidad validada:", dish);
-            // navigate to availability page, pass restaurant in state
             navigate('/availability', { state: { restaurant, allowTakeaway: false } });
         } catch (err) {
             console.error("Error:", err.message);
             const msg = err?.message || '';
             const low = msg.toLowerCase();
-            // If local is full, still navigate to availability page and allow takeaway
             if (low.includes('local lleno') || low.includes('capacidad')) {
                 navigate('/availability', { state: { restaurant, allowTakeaway: true } });
-            // If plato sin disponibilidad (stock 0), still navigate to availability to show 'No disponible'
             } else if (low.includes('sin disponibilidad') || low.includes('sin stock') || low.includes('plato seleccionado sin disponibilidad')) {
                 navigate('/availability', { state: { restaurant, allowTakeaway: false } });
             } else {
@@ -47,7 +41,6 @@ function ClientPanel() {
             <div className="min-h-screen bg-gray-100 px-12 py-8 flex flex-col gap-8 items-center">
                 <ListenerAlertas />
                 <MenuSection onRequestAvailability={handleRequestAvailability} loadingId={loadingId} />
-                <ControlesAlertas />
                 {/* AvailabilitySection is now a separate page; keep it out from here */}
             </div>
 

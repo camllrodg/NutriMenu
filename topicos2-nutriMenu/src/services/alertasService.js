@@ -3,21 +3,25 @@ import { simulatedMenuData } from '../data/menuData'; //Importamos los datos de 
 class AlertaService {
     constructor() {
         this.callback = null; //Callback único para simplificar
-        this._intervalId = null; //ID del intervalo del scheduler
+        this._intervalId = null;
         this._lastHourEmitted = null;
-        //Alarmas reales configurables: por defecto solo 12:00 y 16:00
+        // Alarmas reales configurables: por defecto solo 12:00 y 16:00
         this.realAlarms = [
-            { hour: 12, message: '¡Ya puedes ver el menú de hoy en NutriMenu!' },
+            { hour: 5, message: '¡Ya puedes ver el menú de hoy en NutriMenu!' },
             { hour: 16, message: '¡Ofertas de cierre! Revisa los descuentos de última hora.' }
         ];
-        this.stockThreshold = 5; //Umbral para considerar stock bajo
-        this._lastStockEmittedHour = null;
+        this.currentAlert = null; //Alerta actual persistente
+        this.subscribers = new Set();
     }
     
     subscribe(callback) {
-        this.callback = callback;
+        this.subscribers.add(callback);
+        if (this.currentAlert) {
+            try { callback(this.currentAlert); } catch (e) {}
+        }
+
         return () => {
-            if (this.callback === callback) this.callback = null;
+            try { this.subscribers.delete(callback); } catch (e) {}
         };
     }
 
@@ -28,7 +32,6 @@ class AlertaService {
         this.realAlarms.push({ hour: h, message: message });
     }
 
-    //Eliminar alarmas por hora (quita todas las que coincidan)
     removeRealAlarm(hour) {
         const h = parseInt(hour, 10);
         if (Number.isNaN(h)) return;
@@ -38,12 +41,20 @@ class AlertaService {
     //POE: Emisor de eventos 
     emitAlert(message, ts = null) {
         const payload = { text: message, ts: ts || new Date().toISOString() };
-        if (this.callback) this.callback(payload);
+        // Log en consola siempre que se emite una alerta
+        try { console.log(`[AlertaService] ${new Date(payload.ts).toLocaleString()} - ${payload.text}`); } catch (e) {}
+        this.currentAlert = payload;
+        for (const cb of Array.from(this.subscribers)) {
+            try { cb(payload); } catch (e) {}
+        }
     }
 
     //Limpia la alerta en el listener (envía null)
     clearAlert() {
-        if (this.callback) this.callback(null);
+        this.currentAlert = null;
+        for (const cb of Array.from(this.subscribers)) {
+            try { cb(null); } catch (e) {}
+        }
     }
 
     //El Scheduler: Revisa condiciones de tiempo (usa la hora real del sistema)
@@ -58,17 +69,6 @@ class AlertaService {
                 if (alarm.hour === currentHour) {
                     alarmEmitted = true;
                     this.emitAlert(alarm.message);
-                }
-            }
-
-            //Si no se emitió ninguna alarma por hora, revisar stock bajo en los datos simulados
-            if (!alarmEmitted) {
-                const lowStock = (simulatedMenuData || []).filter(it => typeof it.stock === 'number' && it.stock < this.stockThreshold);
-                if (lowStock.length > 0 && this._lastStockEmittedHour !== currentHour) {
-                    const names = lowStock.map(i => `${i.dish} (${i.stock})`).slice(0, 4).join(', ');
-                    const msg = `Atención: stock bajo en: ${names}. Revisa disponibilidad.`;
-                    this.emitAlert(msg);
-                    this._lastStockEmittedHour = currentHour;
                 }
             }
 
@@ -94,5 +94,10 @@ class AlertaService {
 }
 
 export const notificationService = new AlertaService();
+
+//Iniciar scheduler automáticamente: comprobar cada minuto
+try {
+    notificationService.startScheduler(60000);
+} catch (e) {}
 
 
