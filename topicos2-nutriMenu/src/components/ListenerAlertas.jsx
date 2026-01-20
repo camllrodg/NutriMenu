@@ -16,7 +16,7 @@ const ListenerAlertas = () => {
 
     return (
         <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
-            <AlertaDisplay alerta={alerta} onClose={() => setAlerta(null)} />
+            <AlertaDisplay alerta={alerta} onClose={() => notificationService.clearAlert()} />
         </div>
     );
 };
