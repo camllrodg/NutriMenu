@@ -2,7 +2,7 @@ import { Aspect, Before, After,getWeaver, on } from "@aspectjs/core";
 import {saludo} from "./annotations.js";
 
 @Aspect()
-export class SaludoAspect {
+class SaludoAspect {
     
     @Before(on.methods.withAnnotations(saludo))
     beforeSaludo(meta){
